@@ -1,7 +1,67 @@
 ﻿@page "/"
+@inject HttpClient Http
 
-<PageTitle>Home</PageTitle>
+<h3>Test API Call</h3>
 
-<h1>Hello, world!</h1>
+<p>@message</p>
 
-Welcome to your new app.
+
+<h3>Run Code</h3>
+
+<textarea @bind="code" rows="4" style="width: 100%;"></textarea>
+
+<button @onclick="SendCode">Send to API</button>
+
+<p>@result</p>
+
+@code {
+    string code = "print('hello')"; // тестовое значение
+    string result = "";
+    string message = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await CallApi();
+            StateHasChanged();
+        }
+        @* return base.OnAfterRenderAsync(firstRender); *@
+    }
+
+    private async Task CallApi()
+    {
+        try
+        {
+            var result = await Http.GetStringAsync("api/solutions");
+            message = $"Решения: {result}";
+        }
+        catch (Exception ex)
+        {
+            message = $"Ошибка: {ex.Message}";
+        }
+    }
+
+    private async Task SendCode()
+    {
+        try
+        {
+            var payload = new { code = code };
+
+            var response = await Http.PostAsJsonAsync("api/submissions", payload);
+
+            var data = await response.Content.ReadFromJsonAsync<CreateSubmissionResponse>();
+
+            result = $"RunId: {data?.RunId}";
+        }
+        catch (Exception ex)
+        {
+            result = $"Ошибка: {ex.Message}";
+        }
+    }
+
+    public class CreateSubmissionResponse
+    {
+        public Guid RunId { get; set; }
+    }
+}
