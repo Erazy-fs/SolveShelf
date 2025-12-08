@@ -7,6 +7,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ISubmissionQueueProducer, KafkaSubmissionProducer>();
 
+builder.Services.AddSingleton<IResultsStore, InMemoryResultsStore>();
+builder.Services.AddHostedService<KafkaResultConsumer>();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>

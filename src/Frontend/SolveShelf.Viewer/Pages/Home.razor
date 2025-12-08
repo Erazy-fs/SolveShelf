@@ -14,11 +14,17 @@
 
 <p>@result</p>
 
+@if (!string.IsNullOrEmpty(output))
+{
+    <p>Вывод: @output</p>
+}
+
 @code {
     string code = "print('hello')"; // тестовое значение
     string tests = "print('hello')"; // тестовое значение
     string result = "";
     string message = "";
+    string output = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -58,6 +64,8 @@
             var data = await response.Content.ReadFromJsonAsync<CreateSubmissionResponse>();
 
             result = $"RunId: {data?.RunId}";
+
+            _ = PollStatus(data?.RunId!);
         }
         catch (Exception ex)
         {
@@ -65,6 +73,32 @@
         }
     }
     
+    private async Task PollStatus(string runId)
+    {
+        output = "pending...";
+        StateHasChanged();
+        while (true)
+        {
+            var res = await Http.GetFromJsonAsync<SubmissionResult>($"api/submissions/{runId}/result");
+
+            if (res.Status == "done")
+            {
+                output = res.Result;
+                StateHasChanged();
+                break;
+            }
+
+            await Task.Delay(1000);
+        }
+    }
+
+    private class SubmissionResult
+    {
+        public string Status { get; set; } = "";
+        public string Result { get; set; } = "";
+    }
+
+
     public class CreateSubmissionRequest
     {
         public string Code { get; set; } = "";

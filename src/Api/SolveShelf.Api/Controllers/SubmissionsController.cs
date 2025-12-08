@@ -5,7 +5,7 @@ namespace SolveShelf.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SubmissionsController(ISubmissionQueueProducer submissionQueueProducer) : ControllerBase
+public class SubmissionsController(ISubmissionQueueProducer submissionQueueProducer, IResultsStore results) : ControllerBase
 {
     public class CreateSubmissionRequest
     {
@@ -31,5 +31,16 @@ public class SubmissionsController(ISubmissionQueueProducer submissionQueueProdu
         {
             RunId = runId
         });
+    }
+    
+    [HttpGet("{runId}/result")]
+    public IActionResult GetResult(string runId)
+    {
+        var result = results.Get(runId);
+
+        if (result == null)
+            return Ok(new { status = "pending" });
+
+        return Ok(new { status = "done", result });
     }
 }
