@@ -1,8 +1,11 @@
+using SolveShelf.Api.Kafka;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<ISubmissionQueueProducer, KafkaSubmissionProducer>();
 
 builder.Services.AddCors(options =>
 {

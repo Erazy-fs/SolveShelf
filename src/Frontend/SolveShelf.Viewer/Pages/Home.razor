@@ -16,6 +16,7 @@
 
 @code {
     string code = "print('hello')"; // тестовое значение
+    string tests = "print('hello')"; // тестовое значение
     string result = "";
     string message = "";
 
@@ -46,7 +47,11 @@
     {
         try
         {
-            var payload = new { code = code };
+            var payload = new CreateSubmissionRequest()
+            {
+                Code = code,
+                Tests = tests
+            };
 
             var response = await Http.PostAsJsonAsync("api/submissions", payload);
 
@@ -59,9 +64,15 @@
             result = $"Ошибка: {ex.Message}";
         }
     }
+    
+    public class CreateSubmissionRequest
+    {
+        public string Code { get; set; } = "";
+        public string Tests { get; set; } = "";
+    }
 
     public class CreateSubmissionResponse
     {
-        public Guid RunId { get; set; }
+        public string RunId { get; set; }
     }
 }
