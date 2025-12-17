@@ -45,7 +45,7 @@ public class Worker(ILogger<Worker> logger) : BackgroundService
                 producer.ProduceAsync("results", new Message<string, string>
                 {
                     Key = result.Message.Key,
-                    Value = @"\u0027hello\u0027"
+                    Value = "\"hello\""
                 });
 
             }
