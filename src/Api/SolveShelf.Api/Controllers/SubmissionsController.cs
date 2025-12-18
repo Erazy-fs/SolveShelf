@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SolveShelf.Api.Kafka;
+using SolveShelf.Contracts.Api;
 
 namespace SolveShelf.Api.Controllers;
 
@@ -7,17 +8,6 @@ namespace SolveShelf.Api.Controllers;
 [Route("api/[controller]")]
 public class SubmissionsController(ISubmissionQueueProducer submissionQueueProducer, IResultsStore results) : ControllerBase
 {
-    public class CreateSubmissionRequest
-    {
-        public string Code { get; set; } = "";
-        public string Tests { get; set; } = "";
-    }
-
-    public class CreateSubmissionResponse
-    {
-        public string RunId { get; set; }
-    }
-
     [HttpPost]
     public async Task<ActionResult<CreateSubmissionResponse>> CreateSubmission([FromBody] CreateSubmissionRequest request)
     {
@@ -32,15 +22,23 @@ public class SubmissionsController(ISubmissionQueueProducer submissionQueueProdu
             RunId = runId
         });
     }
-    
+
     [HttpGet("{runId}/result")]
     public IActionResult GetResult(string runId)
     {
         var result = results.Get(runId);
 
         if (result == null)
-            return Ok(new { status = "pending" });
+            return Ok(new SubmissionStatusResponse
+            {
+                Status = RequestStatus.Pending
+            });
 
-        return Ok(new { status = "done", result });
+        return Ok(new SubmissionStatusResponse
+        {
+            Status = RequestStatus.Done,
+            Success = true,
+            Output = result
+        });
     }
 }

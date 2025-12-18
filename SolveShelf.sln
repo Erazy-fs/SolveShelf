@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
@@ -16,6 +16,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Runner", "Runner", "{D3F2662E-07FC-2B44-1F3B-19ABF00FAB83}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolveShelf.Runner", "src\Runner\SolveShelf.Runner\SolveShelf.Runner.csproj", "{F2A27D45-5043-4597-8D0F-9896104ED248}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{2AA32D37-9447-4A50-99CF-A66378E56E14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolveShelf.Contracts", "src\Core\SolveShelf.Contracts\SolveShelf.Contracts.csproj", "{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolveShelf.Infrastructure.Kafka", "src\Core\SolveShelf.Infrastructure.Kafka\SolveShelf.Infrastructure.Kafka.csproj", "{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +69,30 @@ Global
 		{F2A27D45-5043-4597-8D0F-9896104ED248}.Release|x64.Build.0 = Release|Any CPU
 		{F2A27D45-5043-4597-8D0F-9896104ED248}.Release|x86.ActiveCfg = Release|Any CPU
 		{F2A27D45-5043-4597-8D0F-9896104ED248}.Release|x86.Build.0 = Release|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Debug|x64.Build.0 = Debug|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Debug|x86.Build.0 = Debug|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Release|x64.ActiveCfg = Release|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Release|x64.Build.0 = Release|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Release|x86.ActiveCfg = Release|Any CPU
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71}.Release|x86.Build.0 = Release|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Debug|x64.Build.0 = Debug|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Debug|x86.Build.0 = Debug|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Release|x64.ActiveCfg = Release|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Release|x64.Build.0 = Release|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Release|x86.ActiveCfg = Release|Any CPU
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +104,11 @@ Global
 		{F3F8162E-5ACB-4B80-B8BE-76C265EDA148} = {42299874-777B-F2D0-9D08-D24097ABCE7E}
 		{D3F2662E-07FC-2B44-1F3B-19ABF00FAB83} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{F2A27D45-5043-4597-8D0F-9896104ED248} = {D3F2662E-07FC-2B44-1F3B-19ABF00FAB83}
+		{2AA32D37-9447-4A50-99CF-A66378E56E14} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{92D82484-0AE4-4D1D-8783-F88A6D1B2D71} = {2AA32D37-9447-4A50-99CF-A66378E56E14}
+		{61BA35FD-FEE4-4B7F-BA3A-3FE94C869E8F} = {2AA32D37-9447-4A50-99CF-A66378E56E14}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9A2C53F-300C-4C03-8952-28A5CD28F506}
 	EndGlobalSection
 EndGlobal
