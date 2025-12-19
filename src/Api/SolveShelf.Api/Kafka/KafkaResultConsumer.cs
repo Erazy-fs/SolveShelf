@@ -1,47 +1,36 @@
 using Confluent.Kafka;
+using Microsoft.Extensions.Options;
+using SolveShelf.Contracts.Messages;
+using SolveShelf.Infrastructure.Kafka;
+using System.Text.Json;
 
 namespace SolveShelf.Api.Kafka;
 
-public class KafkaResultConsumer : BackgroundService
+public class KafkaResultConsumer(IResultsStore results, IKafkaConsumerFactory consumerFactory, IOptions<KafkaOptions> options) : BackgroundService
 {
-    private readonly IConsumer<string, string> _consumer;
-    private readonly IResultsStore _results;
-
-    public KafkaResultConsumer(IResultsStore results)
-    {
-        _results = results;
-
-        var config = new ConsumerConfig
-        {
-            BootstrapServers = "localhost:9092",
-            GroupId = "results-main",
-            AutoOffsetReset = AutoOffsetReset.Earliest
-        };
-
-        _consumer = new ConsumerBuilder<string, string>(config).Build();
-        _consumer.Subscribe("results");
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        using var consumer = consumerFactory.Create(options.Value.ApiResultsGroupId);
+        consumer.Subscribe(options.Value.ResultsTopic);
+
         Console.WriteLine("[API] Results consumer started");
 
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                var cr = _consumer.Consume(TimeSpan.FromMilliseconds(100));
-                if (cr != null)
-                {
-                    Console.WriteLine($"[API] Result received for {cr.Message.Key}");
-                    _results.Save(cr.Message.Key, cr.Message.Value);
-                }
+                var cr = consumer.Consume(TimeSpan.FromMilliseconds(100));
+                if (cr is null) { results.Cleanup(); continue; }
 
-                _results.Cleanup();
+                var msg = JsonSerializer.Deserialize<SubmissionCompleted>(cr.Message.Value, KafkaJson.Options);
+                Console.WriteLine($"[API] Result received for {cr.Message.Key}");
+                if (msg is not null) results.Save(msg);
+
+                results.Cleanup();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("[API] Consumer error: " + ex.Message);
+                Console.WriteLine("[API] Results consumer error: " + ex.Message);
                 await Task.Delay(1000, stoppingToken);
             }
         }

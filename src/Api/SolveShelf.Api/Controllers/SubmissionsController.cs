@@ -1,6 +1,9 @@
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
 using SolveShelf.Api.Kafka;
 using SolveShelf.Contracts.Api;
+using SolveShelf.Contracts.Messages;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SolveShelf.Api.Controllers;
 
@@ -11,16 +14,17 @@ public class SubmissionsController(ISubmissionQueueProducer submissionQueueProdu
     [HttpPost]
     public async Task<ActionResult<CreateSubmissionResponse>> CreateSubmission([FromBody] CreateSubmissionRequest request)
     {
-        // пока просто генерим runId и возвращаем
         var runId = Guid.NewGuid().ToString();
 
         Console.WriteLine($"New submission. Code length = {request.Code.Length}, RunId = {runId}");
-        await submissionQueueProducer.EnqueueAsync(runId, request.Code, request.Tests, HttpContext.RequestAborted);
-
-        return Ok(new CreateSubmissionResponse
+        await submissionQueueProducer.EnqueueAsync(new SubmissionRequested()
         {
-            RunId = runId
-        });
+            RunId = runId,
+            Code = request.Code,
+            Tests = request.Tests,
+        }, HttpContext.RequestAborted);
+
+        return Ok(new CreateSubmissionResponse { RunId = runId });
     }
 
     [HttpGet("{runId}/result")]
@@ -29,16 +33,13 @@ public class SubmissionsController(ISubmissionQueueProducer submissionQueueProdu
         var result = results.Get(runId);
 
         if (result == null)
-            return Ok(new SubmissionStatusResponse
-            {
-                Status = RequestStatus.Pending
-            });
+            return Ok(new SubmissionStatusResponse { Status = RequestStatus.Pending });
 
         return Ok(new SubmissionStatusResponse
         {
             Status = RequestStatus.Done,
-            Success = true,
-            Output = result
+            Success = result.Success,
+            Output = result.Output
         });
     }
 }

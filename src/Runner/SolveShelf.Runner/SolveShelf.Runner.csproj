@@ -11,4 +11,9 @@
     <PackageReference Include="Confluent.Kafka" Version="2.12.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\SolveShelf.Contracts\SolveShelf.Contracts.csproj" />
+    <ProjectReference Include="..\..\Core\SolveShelf.Infrastructure.Kafka\SolveShelf.Infrastructure.Kafka.csproj" />
+  </ItemGroup>
 </Project>

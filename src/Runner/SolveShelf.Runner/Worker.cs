@@ -1,53 +1,52 @@
 using Confluent.Kafka;
+using Microsoft.Extensions.Options;
+using SolveShelf.Contracts.Messages;
+using SolveShelf.Infrastructure.Kafka;
+using System.Text.Json;
 
 namespace SolveShelf.Runner;
 
-public class Worker(ILogger<Worker> logger) : BackgroundService
+public class Worker(
+    ILogger<Worker> logger,
+    IKafkaConsumerFactory consumerFactory,
+    IKafkaProducer producer,
+    IOptions<KafkaOptions> options) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine("Runner started. Waiting for messages...");
+        using var consumer = consumerFactory.Create(options.Value.RunnerGroupId);
+        consumer.Subscribe(options.Value.RunsTopic);
+
         logger.LogInformation("Runner started. Waiting for messages...");
-
-        var config = new ConsumerConfig
-        {
-            BootstrapServers = "localhost:9092",
-            GroupId = "runner-group-1",     // важный момент: consumer group
-            AutoOffsetReset = AutoOffsetReset.Earliest,
-            EnableAutoCommit = true
-        };
-
-        using var consumer = new ConsumerBuilder<string, string>(config).Build();
-
-        consumer.Subscribe("runs");
-        
-        var producerConfig = new ProducerConfig
-        {
-            BootstrapServers = "localhost:9092"
-            // потом вынесем это в конфиг/переменные окружения
-        };
-
-        var producer = new ProducerBuilder<string, string>(producerConfig).Build();
 
         try
         {
             while (!stoppingToken.IsCancellationRequested)
             {
                 var result = consumer.Consume(stoppingToken);
+                logger.LogInformation("Received message from 'runs': Key={Key}, Value={Value}", result.Message.Key, result.Message.Value);
 
-                Console.WriteLine(
-                    $"Received message from 'runs': Key={result.Message.Key}, Value={result.Message.Value}");
-                logger.LogInformation("Received message from 'runs': Key={Key}, Value={Value}",
-                    result.Message.Key, result.Message.Value);
-                
-                await Task.Delay(5000, stoppingToken);
-                
-                producer.ProduceAsync("results", new Message<string, string>
+                var req = JsonSerializer.Deserialize<SubmissionRequested>(result.Message.Value, KafkaJson.Options);
+                if (req is null)
                 {
-                    Key = result.Message.Key,
-                    Value = "\"hello\""
-                });
+                    logger.LogWarning("Failed to deserialize SubmissionRequested. RunId={RunId}", req.RunId);
+                    continue;
+                }
 
+
+                // имитация выполнения
+                await Task.Delay(5000, stoppingToken);
+
+                var completed = new SubmissionCompleted
+                {
+                    RunId = req.RunId,
+                    Success = true,
+                    Output = $"Fake result for {req.RunId}",
+                    CompletedAtUtc = DateTime.UtcNow
+                };
+
+                await producer.ProduceAsync(options.Value.ResultsTopic, completed.RunId, completed, stoppingToken);
+                logger.LogInformation("Sent result for {RunId}", completed.RunId);
             }
         }
         catch (OperationCanceledException)

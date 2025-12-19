@@ -1,10 +1,10 @@
-using System.Collections.Concurrent;
+using SolveShelf.Contracts.Messages;
 
 namespace SolveShelf.Api.Kafka;
 
 public interface IResultsStore
 {
-    void Save(string runId, string json);
-    string? Get(string runId);
+    void Save(SubmissionCompleted result);
+    SubmissionCompleted? Get(string runId);
     void Cleanup();
 }

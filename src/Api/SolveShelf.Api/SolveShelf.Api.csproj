@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\SolveShelf.Contracts\SolveShelf.Contracts.csproj" />
+    <ProjectReference Include="..\..\Core\SolveShelf.Infrastructure.Kafka\SolveShelf.Infrastructure.Kafka.csproj" />
   </ItemGroup>
 
 </Project>
