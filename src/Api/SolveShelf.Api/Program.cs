@@ -1,5 +1,7 @@
 using SolveShelf.Api.Kafka;
 using SolveShelf.Infrastructure.Kafka;
+using Microsoft.EntityFrameworkCore;
+using SolveShelf.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,13 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
+});
+
+builder.Services.AddDbContext<SolveShelfDbContext>(options =>
+{
+    var cs = builder.Configuration.GetConnectionString("Postgres");
+    options.UseNpgsql(cs)
+           .UseSnakeCaseNamingConvention();
 });
 
 var app = builder.Build();
