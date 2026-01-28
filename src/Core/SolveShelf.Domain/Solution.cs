@@ -12,5 +12,5 @@ public class Solution
     public Language Language { get; set; } = null!;
 
     public string Code { get; set; } = null!;
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 }

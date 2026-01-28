@@ -9,7 +9,7 @@ namespace SolveShelf.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SubmissionsController(ISubmissionQueueProducer submissionQueueProducer, IResultsStore results) : ControllerBase
+public sealed class SubmissionsController(ISubmissionQueueProducer submissionQueueProducer, IResultsStore results) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult<CreateSubmissionResponse>> CreateSubmission([FromBody] CreateSubmissionRequest request)

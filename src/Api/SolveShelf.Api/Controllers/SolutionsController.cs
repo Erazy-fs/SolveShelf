@@ -4,7 +4,7 @@ namespace SolveShelf.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SolutionsController : ControllerBase
+public sealed class SolutionsController : ControllerBase
 {
     [HttpGet]
     public IActionResult GetSolutions()
